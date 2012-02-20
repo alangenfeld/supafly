@@ -1,4 +1,4 @@
-function Room(size, doors, floorMaterial) {
+function Cave(size, doors, floorMaterial) {
   this.walls = new Array();
   if (doors) {
     this.doors = doors;
@@ -19,7 +19,7 @@ function Room(size, doors, floorMaterial) {
 		      0
 		    ));
   } else {
-    this.walls.push(new Plane([0,size/2,size/4], size/2, size, -90, [1,0,0], "wall.png"));
+    this.walls.push(new Plane([0,size/2,size/4], size/2, size, -90, [1,0,0], "caveWall.png"));
   }
 
   // east
@@ -30,7 +30,7 @@ function Room(size, doors, floorMaterial) {
 		      90
 		    ));
   } else {
-    this.walls.push(new Plane([size/2,0,size/4], size, size/2, 90, [0,1,0], "wall.png"));
+    this.walls.push(new Plane([size/2,0,size/4], size, size/2, 90, [0,1,0], "caveWall.png"));
   }  
   
   
@@ -42,12 +42,12 @@ function Room(size, doors, floorMaterial) {
 		      -90
 		    ));
   } else {
-    this.walls.push(new Plane([-size/2,0,size/4], size, size/2, -90, [0,1,0], "wall.png"));
+    this.walls.push(new Plane([-size/2,0,size/4], size, size/2, -90, [0,1,0], "caveWall.png"));
   }
 
   // south
   if (this.doors[3]) {
-    this.walls.push(new Plane([0, -size/2, .01], size/5, size/5, 0, [0,0,0], "floor.png"));
+    this.walls.push(new Plane([0, -size/2, .01], size/5, size/5, 0, [0,0,0], "caveFloor.png"));
   }
 
   this.shutdown = function() {
@@ -57,4 +57,4 @@ function Room(size, doors, floorMaterial) {
   };
   
 }
-Room.prototype = new GameObject;
+Game.prototype = new GameObject;
