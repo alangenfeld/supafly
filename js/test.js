@@ -13,7 +13,7 @@ shadows = false;
 camera.pos = [0, -18,25];
 var light = new Light([0,0,5], true);
 light.manualControl = true;
-var room = new Room(15);
+var room = new Cave(15);
 var boxes = Array();
 var enemies = Array();
 
