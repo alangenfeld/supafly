@@ -18,8 +18,8 @@ var Game = function() {
   this.wait = function() {
     if(keyboard.space) {
       if (game.reset) {
-	game.reset();
-	game.reset = null;
+	      game.reset();
+	      game.reset = null;
       }
       game.paused = false;
       game.start();
@@ -104,7 +104,6 @@ function renderMapToScreen(i) {
   light.set(i);
   objectManager.drawAll();
 }
-
 
 function renderObjects() {
   gl.bindFramebuffer(gl.FRAMEBUFFER, null);
