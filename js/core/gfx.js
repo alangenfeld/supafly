@@ -69,7 +69,7 @@ shadowCubeFB.width = 512;
 shadowCubeFB.height = 512;
 var shadowCubeTex;
 
-function initShadowMaps() {
+function initShadowCube() {
   // create the cube map texture context
   shadowCubeTex = gl.createTexture();
   gl.bindTexture(gl.TEXTURE_CUBE_MAP, shadowCubeTex);
@@ -94,9 +94,5 @@ function initShadowMaps() {
     // attach the render buffer to the current frame buffer
     gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, renderbuffer);
   }
-
-//  gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);
-//  gl.bindRenderbuffer(gl.RENDERBUFFER, null);
-//  gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 };
-initShadowMaps();
+initShadowCube();

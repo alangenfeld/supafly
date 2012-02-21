@@ -10,23 +10,26 @@ function Camera() {
   this.mouseY = 0;
   this.leftPressed = false;
   this.rightPressed = false;
+  this.mouseControl = false;
 
   // will change
   this.update = function() {
-    if (mouse.leftPressed && this.leftPressed && keyboard.z) {
-      this.pos[2] -= (mouse.y - this.mouseY)*this.speed;
-    } else if (mouse.leftPressed && this.leftPressed) {
-      this.pos[0] -= (mouse.x - this.mouseX)*this.speed;
-      this.pos[1] += (mouse.y - this.mouseY)*this.speed;
-    } else if (mouse.rightPressed && this.rightPressed) {
-      this.yaw -= (mouse.x - this.mouseX)*this.roll;
-      this.pitch -= (mouse.y - this.mouseY)*this.roll;
-    } else {
-      this.leftPressed = mouse.leftPressed;
-      this.rightPressed = mouse.rightPressed;
+    if (this.mouseControl) {
+      if (mouse.leftPressed && this.leftPressed && keyboard.z) {
+        this.pos[2] -= (mouse.y - this.mouseY)*this.speed;
+      } else if (mouse.leftPressed && this.leftPressed) {
+        this.pos[0] -= (mouse.x - this.mouseX)*this.speed;
+        this.pos[1] += (mouse.y - this.mouseY)*this.speed;
+      } else if (mouse.rightPressed && this.rightPressed) {
+        this.yaw -= (mouse.x - this.mouseX)*this.roll;
+        this.pitch -= (mouse.y - this.mouseY)*this.roll;
+      } else {
+        this.leftPressed = mouse.leftPressed;
+        this.rightPressed = mouse.rightPressed;
+      }
+      this.mouseX = mouse.x;
+      this.mouseY = mouse.y;      
     }
-    this.mouseX = mouse.x;
-    this.mouseY = mouse.y;
   };
 
   this.set = function() {
