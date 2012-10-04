@@ -104,7 +104,7 @@ function World(width, height) {
           collisions.push(
             new Collision(
               object2.getID(), 
-              vec3.subtract(object2.pos, object1.pos, [])
+              vec3.normalize(vec3.subtract(object1.pos, object2.pos, []))
             )
           );
         }
