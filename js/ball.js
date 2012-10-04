@@ -1,5 +1,5 @@
 function Ball(pos, dir) {
-  this.radius = 10;
+  this.radius = 8;
   this.pos = pos;
   this.direction = vec3.normalize(dir);
 
