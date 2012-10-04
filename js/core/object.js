@@ -1,13 +1,19 @@
 /**
  * Base game object class
  */
+var objectID = 0;
 function GameObject() {
   this.render = true;
   this.shadow = true;
   this.enabled = true;
 
+  this.getID = function() {
+    return this.id;    
+  };
+
   this.init = function() {
-    objectManager.objects.push(this);
+    this.id = objectID++;
+    objectManager.add(this);
   };
 
   this.update = function() {
@@ -29,10 +35,14 @@ function GameObject() {
 function ObjectManager() {
   this.objects = new Array();
 
+  this.add = function(obj) {
+    this.objects[obj.getID()] = obj;
+  };
+
   this.updateAll = function() {
     for (idx in this.objects) {
       if (this.objects[idx].enabled) {
-	this.objects[idx].update();	
+        this.objects[idx].update();	
       }
     }
   };
@@ -40,19 +50,27 @@ function ObjectManager() {
   this.drawAll = function() {
     for (idx in this.objects) {
       if (shadowPass >= 0 && this.objects[idx].shadow && this.objects[idx].enabled) {
-	this.objects[idx].draw();
+	      this.objects[idx].draw();
       } else if (shadowPass < 0 && this.objects[idx].render && this.objects[idx].enabled) {
-	this.objects[idx].draw();
+	      this.objects[idx].draw();
       }
     }
   };
 
   this.remove = function(obj) {
-    this.objects.splice(this.objects.indexOf(obj), 1);
+    delete this.objects[obj.getID()];
   };
 
   this.clear = function() {
     this.objects = new Array();
+  };
+
+  this.getObjects = function() {
+    return this.objects;
+  };
+  
+  this.getByID = function(id) {
+    return this.objects[id];
   };
 };
 var objectManager = new ObjectManager;
