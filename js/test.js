@@ -1,38 +1,16 @@
-/**
- * Utilities
- */
+var world = new World(800, 600);
 
-$("lightsOn").onclick = function() {
-  light.ambient = [.4, .4, .4];  
-};
-$("lightsOff").onclick = function() {
-  light.ambient = [.01, .01, .01];
-};
+var balls = [];
 
-shadows = false;
-camera.pos = [0, -18,25];
-var light = new Light([0,0,5], true);
-light.manualControl = true;
-var room = new Cave(15);
-var boxes = Array();
-var enemies = Array();
-
-//var boss = new ModelMan([0, 0, 3], "bugEyed");
-
-
-boxes.push( new ColorBox([3, 0, 2], [1, 1, 1], [0,0,1]));
-boxes.push( new ColorBox([0, 3, 3], [1, 1, 1]), [0,1,0]);
-boxes.push( new ColorBox([-3, 0, 4], [1, 1, 1], [1,0,0]));
-boxes.push( new ColorBox([0, -3, 1], [1, 1, 1], [1,1,0]));
-boxes.push( new ColorBox([0, 0, 1], [1, 1, 1], [0,1,0]));
-
-/*
-for (var i in boxes) {
-  boxes[i].rotating = true;
+for (var i=0; i < 30; i++) {
+  var posX = Math.random() * 800;
+  var posY = Math.random() * 600;
+  var vX = (Math.random() * 2) - 1;
+  var vY = (Math.random() * 2) - 1;
+  balls.push(new Ball([posX, posY, 0], [vX, vY, 0]));
 }
 
-for (var i in enemies){
-  enemies[i].rotating = true;
-}
-*/
+
+
+
 game.start();
