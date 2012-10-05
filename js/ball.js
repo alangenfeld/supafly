@@ -1,23 +1,25 @@
-function Ball(pos, dir) {
+function Ball(pos, velocity) {
   this.radius = 8;
   this.pos = pos;
-  this.direction = vec3.normalize(dir);
+  this.velocity = velocity;
 
   this.height = this.width = this.radius * 2;
-  this.speed = 5;
 
   this.init();
 
   this.update = function(){
+    vec3.add(this.velocity, world.getGravityVDelta(), this.velocity);
+
     var collisions = world.collisions(this);
     if (collisions.length > 0) {
       for (idx in collisions) {
-        vec3.add(collisions[idx].vector, this.direction, this.direction);
+        vec3.add(collisions[idx].vector, this.velocity, this.velocity);
       }
-      this.direction = vec3.normalize(this.direction);
     }
 
-    this.pos = vec3.add(this.pos, vec3.scale(this.direction, this.speed, []));
+    // TODO: account for collision position correction
+
+    this.pos = vec3.add(this.pos, this.velocity);
   };
 
   this.draw = function() {
@@ -26,11 +28,11 @@ function Ball(pos, dir) {
     ctx.arc(
       this.pos[0] + this.radius,
       this.pos[1] + this.radius,
-      this.radius, 
+      this.radius,
       0,
-      Math.PI*2, 
+      Math.PI*2,
       true
-    ); 
+    );
     ctx.closePath();
     ctx.fill();
   };

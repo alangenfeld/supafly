@@ -6,7 +6,9 @@ function $() {
 }
 
 // stats
-var lastRender, loopStart, updateFinish, renderFinish;
+var lastRender = 0;
+var loopStart = 0;
+var updateFinish, renderFinish;
 var updateStats = function() {
   if(statsOn){
     $("ut").innerHTML = (updateFinish - loopStart) + " ms";
@@ -14,8 +16,6 @@ var updateStats = function() {
     $("fps").innerHTML = (Math.floor(1000 / (renderFinish - lastRender))) + " fps";
     $("num_objs").innerHTML = (objectManager.objects.length);
   }
-
-  lastRender = renderFinish;
 };
 
 
@@ -55,16 +55,16 @@ function shaderNameToType(str)
 
 
 function loadShaders(gl, shaders, callback) {
-  
+
   // (C) WebReflection - Mit Style License
   function onreadystatechange() {
-    
+
     var
     xhr = this,
     i = xhr.i
     ;
     if (xhr.readyState == 4) {
-      
+
       shaders[i] = gl.createShader(
         shaderNameToType(shaders[i]) =="fs" ?
           gl.FRAGMENT_SHADER :
@@ -116,8 +116,8 @@ function getShader(name) {
       throw("shader failure " + gl.getProgramInfoLog(shaderProgram));
     }
 
-    shaderProgram.mMatrix = gl.getUniformLocation(shaderProgram, "uMMatrix");   
-    shaderProgram.nMatrix = gl.getUniformLocation(shaderProgram, "uNMatrix");   
+    shaderProgram.mMatrix = gl.getUniformLocation(shaderProgram, "uMMatrix");
+    shaderProgram.nMatrix = gl.getUniformLocation(shaderProgram, "uNMatrix");
     shaderProgram.vMatrix = gl.getUniformLocation(shaderProgram, "uVMatrix");
     shaderProgram.pMatrix = gl.getUniformLocation(shaderProgram, "uPMatrix");
     shaderProgram.lpMatrix = gl.getUniformLocation(shaderProgram, "uLPMatrix");
@@ -145,7 +145,7 @@ function getModel(modelName) {
   var model = modelMap[modelName];
   if (model)
     return model;
-  
+
   var path = "models/" + modelName + ".js";
   model = fetchModel(path);
   modelMap[modelName] = model;
@@ -194,7 +194,7 @@ function loadModel(obj, modelName) {
     normals[3*face.c+2] = face.vertexNormals[2].z;
 
     // if quad
-    if (face.d) { 
+    if (face.d) {
       vtxIndex.push(face.a);
       vtxIndex.push(face.c);
       vtxIndex.push(face.d);
@@ -213,24 +213,24 @@ function loadModel(obj, modelName) {
   obj.attributeCount = model.faces.length;
 }
 
-// this is a total hack. 
+// this is a total hack.
 function parseTHREE( json ) {
 
   var scope = {
-    faceUvs: new Array(), 
+    faceUvs: new Array(),
     faceVertexUvs: new Array(),
-    vertices: new Array(), 
-    materials: new Array(), 
+    vertices: new Array(),
+    materials: new Array(),
     faces: new Array()
   };
-  
-  var i, j, 
+
+  var i, j,
 
   offset, zLength,
 
   type,
-  isQuad, 
-  hasMaterial, 
+  isQuad,
+  hasMaterial,
   hasFaceUv, hasFaceVertexUv,
   hasFaceNormal, hasFaceVertexNormal,
   hasFaceColor, hasFaceVertexColor,
@@ -287,7 +287,7 @@ function parseTHREE( json ) {
     face = {};
 
     if ( isQuad ) {
-      
+
       face.a = faces[ offset ++ ];
       face.b = faces[ offset ++ ];
       face.c = faces[ offset ++ ];
@@ -329,7 +329,7 @@ function parseTHREE( json ) {
         uvs = [];
 
         for ( j = 0; j < nVertices; j ++ ) {
-	  
+
           uvIndex = faces[ offset ++ ];
           u = uvLayer[ uvIndex * 2 ];
           v = uvLayer[ uvIndex * 2 + 1 ];

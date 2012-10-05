@@ -35,12 +35,18 @@ function PhysicalGameObject() {
 }
 PhysicalGameObject.prototype = new GameObject;
 
-function World(width, height) {
+function World(width, height, g) {
   this.width = width;
   this.height = height;
-  
+
   this.objects = new Array();
   this.collisionMap = new Array();
+
+  // Acceleration due to gavity (some distance unit? / s / s)
+  if (typeof g === "undefined") {
+    g = 0.000000000098;
+  }
+  this.g = g;
 
   this.init();
 
@@ -59,41 +65,46 @@ function World(width, height) {
       var object1 = objectManager.getByID(idx);
       var collisions = new Array();
 
+      var horizSpeed = object1.velocity[0];
+      var vertSpeed = object1.velocity[1];
+
       // boundary collision
-      if (object1.getRightBounds() >= this.width) {
-        collisions.push(new Collision(this.getID(), [-1, 0, 0]));
-      }
-      if (object1.getLeftBounds() <= 0) {
-        collisions.push(new Collision(this.getID(), [1, 0, 0]));
-      }
-      if (object1.getTopBounds() <= 0) {
-        collisions.push(new Collision(this.getID(), [0, 1, 0]));
+      if (object1.getRightBounds() >= this.width && horizSpeed > 0) {
+        collisions.push(new Collision(this.getID(), [-horizSpeed * 2, 0, 0]));
       }
 
-      if (object1.getBottomBounds() >= this.height) {
-        collisions.push(new Collision(this.getID(), [0, -1, 0]));
+      if (object1.getLeftBounds() <= 0 && horizSpeed < 0) {
+        collisions.push(new Collision(this.getID(), [-horizSpeed * 2, 0, 0]));
       }
 
-      // object collisions      
+      if (object1.getTopBounds() <= 0 && vertSpeed < 0) {
+        collisions.push(new Collision(this.getID(), [0, -vertSpeed * 2, 0]));
+      }
+
+      if (object1.getBottomBounds() >= this.height && vertSpeed > 0) {
+        collisions.push(new Collision(this.getID(), [0, -vertSpeed * 2, 0]));
+      }
+
+      // object collisions
       for (idx2 in this.objects) {
         if (idx === idx2) {
           continue;
         }
         var object2 = objectManager.getByID(idx2);
 
-        var right_intersect = 
+        var right_intersect =
           object1.getRightBounds() >= object2.getLeftBounds() &&
           object1.getRightBounds() <= object2.getRightBounds();
 
-        var left_intersect = 
+        var left_intersect =
           object1.getLeftBounds() <= object2.getRightBounds() &&
           object1.getLeftBounds() >= object2.getLeftBounds();
 
-        var top_intersect = 
+        var top_intersect =
           object1.getTopBounds() <= object2.getBottomBounds() &&
           object1.getTopBounds() >= object2.getTopBounds();
 
-        var bottom_intersect = 
+        var bottom_intersect =
           object1.getBottomBounds() >= object2.getTopBounds() &&
           object1.getBottomBounds() <= object2.getBottomBounds();
 
@@ -103,8 +114,8 @@ function World(width, height) {
         if (vertical_intersect && horizontal_intersect) {
           collisions.push(
             new Collision(
-              object2.getID(), 
-              vec3.normalize(vec3.subtract(object1.pos, object2.pos, []))
+              object2.getID(),
+              this.calcCollisionImpulse(object1, object2)
             )
           );
         }
@@ -113,9 +124,29 @@ function World(width, height) {
     }
   };
 
+  this.calcCollisionImpulse = function(o1, o2) {
+    var deltaP = vec3.subtract(o1.pos, o2.pos, []);
+    var deltaV = vec3.subtract(o1.velocity, o2.velocity, []);
+
+    var normal = vec3.normalize(deltaP);
+    var normalSpeed = vec3.dot(deltaV, normal);
+
+    // if objects are already moving away from one another, just chill
+    if (normalSpeed > 0) {
+      return [0, 0, 0];
+    }
+
+    return vec3.scale(normal, -normalSpeed, []);
+  }
+
   this.collisions = function(obj) {
     return this.collisionMap[obj.getID()] || [];
   };
+
+  // returns change in velocity due to gravity for the current timestep
+  this.getGravityVDelta = function() {
+    return [0, (game.deltaT / 1000) * this.g, 0];
+  }
 
 }
 World.prototype = new GameObject;
