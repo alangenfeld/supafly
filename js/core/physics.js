@@ -136,7 +136,7 @@ function World(width, height, g) {
       return [0, 0, 0];
     }
 
-    return vec3.scale(normal, -normalSpeed, []);
+    return vec3.scale(normal, -normalSpeed * o1.cor, []);
   }
 
   this.collisions = function(obj) {

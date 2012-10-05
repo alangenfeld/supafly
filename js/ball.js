@@ -2,6 +2,8 @@ function Ball(pos, velocity) {
   this.radius = 8;
   this.pos = pos;
   this.velocity = velocity;
+  // coefficient of restitution
+  this.cor = .95;
 
   this.height = this.width = this.radius * 2;
 
