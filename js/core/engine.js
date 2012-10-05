@@ -5,10 +5,11 @@ var Game = function() {
   this.paused = false;
   this.reset = null;
   this.tick = 0;
+  this.deltaT;
 
   this.pause = function () {
     if (this.paused) {
-      this.paused = false;      
+      this.paused = false;
       this.start();
     } else {
       this.paused = true;
@@ -39,18 +40,19 @@ var Game = function() {
   this.start = function() {
     game.tick++;
     loopStart = Date.now();
-    
+    this.deltaT = loopStart - lastRender;
+
     // update each game object
     objectManager.updateAll();
     updateFinish = Date.now();
-    
+
     // clear 2d canvas
     ctx.clearRect(0, 0, display2.width, display2.height);
 
     render();
     renderFinish = Date.now();
-    
     updateStats();
+    lastRender = renderFinish;
     if (game.paused) {
       //requestAnimFrame(game.wait, display);
       this.gloop = setTimeout(game.wait, 30);
@@ -74,15 +76,15 @@ function render() {
 }
 
 function renderShadowMaps() {
-  mat4.perspective(90, shadowCubeFB.width / shadowCubeFB.height, 
+  mat4.perspective(90, shadowCubeFB.width / shadowCubeFB.height,
 		   0.01, 100.0, lpMatrix);
-  
+
   for (var i=0; i<6; i++) {
     shadowPass = i;
     gl.bindFramebuffer(gl.FRAMEBUFFER, shadowCubeFB[i]);
     gl.viewport(0, 0, shadowCubeFB.width, shadowCubeFB.height);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    
+
     light.set(i);
     objectManager.drawAll();
   }
@@ -93,14 +95,14 @@ function renderShadowMaps() {
 }
 
 function renderMapToScreen(i) {
-  mat4.perspective(90, shadowCubeFB.width / shadowCubeFB.height, 
+  mat4.perspective(90, shadowCubeFB.width / shadowCubeFB.height,
 		   0.01, 100.0, lpMatrix);
-  
+
   shadowPass = i;
   gl.bindFramebuffer(gl.FRAMEBUFFER, null);
   gl.viewport(0, 0, shadowCubeFB.width, shadowCubeFB.height);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-  
+
   light.set(i);
   objectManager.drawAll();
 }
@@ -109,7 +111,7 @@ function renderObjects() {
   gl.bindFramebuffer(gl.FRAMEBUFFER, null);
   gl.viewport(0, 0, display.width, display.height);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-  
+
   camera.set();
   objectManager.drawAll();
 }
