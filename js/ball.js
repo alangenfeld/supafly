@@ -17,9 +17,14 @@ function Ball(pos, velocity) {
       }
     }
 
-    // TODO: account for collision position correction
-
     this.pos = vec3.add(this.pos, this.velocity);
+
+    // HACK to stop from falling out of the screen due to persistent gravity
+    // We can fix this problem more generally by providing a positionx
+    // offset along with every collision impulse
+    if (this.getBottomBounds() > world.height) {
+      this.pos = [this.pos[0], world.height - this.height, 0]
+    }
   };
 
   this.draw = function() {
