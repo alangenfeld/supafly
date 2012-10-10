@@ -1,32 +1,35 @@
 function Ball(pos, velocity) {
-  this.radius = 8;
+  this.radius = 10;
   this.pos = pos;
   this.velocity = velocity;
+
   // coefficient of restitution
-  this.cor = .95;
+  this.cor = .9;
 
   this.height = this.width = this.radius * 2;
 
   this.init();
 
-  this.update = function(){
-    vec3.add(this.velocity, world.getGravityVDelta(), this.velocity);
+  this.update = function() {
+    vec3.add(this.pos, this.velocity);
 
     var collisions = world.collisions(this);
+    if (!collisions.length) {
+      vec3.add(this.velocity, world.getGravityVDelta(), this.velocity);
+    }
+    var collisionDeltaX = [0, 0, 0];
     if (collisions.length > 0) {
       for (idx in collisions) {
+        var collision = collisions[idx];
         vec3.add(collisions[idx].vector, this.velocity, this.velocity);
+        if (collision.deltaX) {
+          vec3.add(collisionDeltaX, collision.deltaX);
+        }
       }
     }
 
-    this.pos = vec3.add(this.pos, this.velocity);
+    this.pos = vec3.add(this.pos, collisionDeltaX);
 
-    // HACK to stop from falling out of the screen due to persistent gravity
-    // We can fix this problem more generally by providing a positionx
-    // offset along with every collision impulse
-    if (this.getBottomBounds() > world.height) {
-      this.pos = [this.pos[0], world.height - this.height, 0]
-    }
   };
 
   this.draw = function() {

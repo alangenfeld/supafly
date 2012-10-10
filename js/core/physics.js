@@ -70,19 +70,43 @@ function World(width, height, g) {
 
       // boundary collision
       if (object1.getRightBounds() >= this.width && horizSpeed > 0) {
-        collisions.push(new Collision(this.getID(), [-horizSpeed * 2, 0, 0]));
+        collisions.push(
+          new Collision(
+            this.getID(),
+            [-horizSpeed * 2 * object1.cor, 0, 0],
+            [this.width - object1.getRightBounds(), 0, 0]
+          )
+        );
       }
 
       if (object1.getLeftBounds() <= 0 && horizSpeed < 0) {
-        collisions.push(new Collision(this.getID(), [-horizSpeed * 2, 0, 0]));
+        collisions.push(
+          new Collision(
+            this.getID(),
+            [-horizSpeed * 2 * object1.cor, 0, 0],
+            [-object1.getLeftBounds(), 0, 0]
+          )
+        );
       }
 
       if (object1.getTopBounds() <= 0 && vertSpeed < 0) {
-        collisions.push(new Collision(this.getID(), [0, -vertSpeed * 2, 0]));
+        collisions.push(
+          new Collision(
+            this.getID(),
+            [0, -vertSpeed * 2 * object1.cor, 0],
+            [0, -object1.getTopBounds(), 0]
+          )
+        );
       }
 
       if (object1.getBottomBounds() >= this.height && vertSpeed > 0) {
-        collisions.push(new Collision(this.getID(), [0, -vertSpeed * 2, 0]));
+        collisions.push(
+          new Collision(
+            this.getID(),
+            [0, -vertSpeed * 2 * object1.cor, 0],
+            [0, this.height - object1.getBottomBounds(), 0]
+          )
+        );
       }
 
       // object collisions
@@ -115,7 +139,8 @@ function World(width, height, g) {
           collisions.push(
             new Collision(
               object2.getID(),
-              this.calcCollisionImpulse(object1, object2)
+              this.calcCollisionImpulse(object1, object2),
+              this.calcPositionOffset(object1, object2)
             )
           );
         }
@@ -136,7 +161,16 @@ function World(width, height, g) {
       return [0, 0, 0];
     }
 
-    return vec3.scale(normal, -normalSpeed * o1.cor, []);
+    var impulse = vec3.scale(normal, -normalSpeed * o1.cor, []);
+    return impulse;
+  }
+
+  this.calcPositionOffset = function(o1, o2) {
+    var deltaP = vec3.subtract(o1.pos, o2.pos, []);
+    var d = vec3.length(deltaP);
+
+    // minimum translation distance to push balls apart after intersecting, halved
+    return vec3.scale(deltaP, (o1.radius + o2.radius - d) / (2 * d));
   }
 
   this.collisions = function(obj) {
@@ -151,7 +185,8 @@ function World(width, height, g) {
 }
 World.prototype = new GameObject;
 
-function Collision(id, vector) {
+function Collision(id, deltaV, deltaX) {
   this.id = id;
-  this.vector = vector;
+  this.vector = deltaV;
+  this.deltaX = deltaX;
 }
